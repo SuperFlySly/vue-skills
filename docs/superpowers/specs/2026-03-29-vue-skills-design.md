@@ -9,7 +9,7 @@ The skills should be grounded in patterns observed in the two reference reposito
 - `prefect-design`: a low-level reusable Vue component system
 - `prefect-ui-library`: a higher-level Vue library with domain models, services, maps, schemas, and application-facing components
 
-The resulting skills should be generic and reusable across future Vue projects, with Prefect patterns cited as evidence and examples rather than copied as strict defaults.
+The resulting skills should be generic and reusable across future Vue projects, with Prefect patterns cited as evidence and examples rather than copied as strict defaults. They should teach agents how to choose an appropriate level of structure for the project at hand, not how to clone the organization of these two repositories.
 
 ## Source Analysis Summary
 
@@ -46,12 +46,14 @@ Observed risks and caveats:
 
 ### Cross-Repo Conclusions
 
-The two repositories together suggest a useful architectural split for future Vue projects:
+The two repositories together show what disciplined Vue code can look like when a codebase grows large enough to need explicit boundaries. They are useful reference points for:
 
-- a reusable UI/system layer for low-level components and shared presentation primitives
-- a domain/application layer for services, models, maps, schemas, routing, and feature-specific components
+- separating responsibilities clearly
+- defining public module surfaces intentionally
+- keeping domain and transport logic out of presentational components
+- scaling structure as complexity increases
 
-They also show that good structure alone is not enough. A future skill set should preserve the strong layering and typed boundaries while being stricter about testing and verification.
+They should not be treated as proof that every Vue project needs the same folders, the same number of layers, or the same library-oriented split. A future skill set should preserve the underlying principles while teaching agents to apply only as much structure as the current project actually needs.
 
 ## Proposed Skill Set
 
@@ -63,10 +65,11 @@ Help agents structure a Vue 3 + TypeScript project with clear module boundaries,
 Primary guidance:
 
 - Organize code by responsibility, not by file type alone
-- Keep components, compositions, services, maps/adapters, models/types, and utilities distinct
+- Introduce components, compositions, services, maps/adapters, models/types, and utilities only when the project complexity justifies them
 - Use top-level `index.ts` files intentionally to define public APIs, not as dumping grounds
-- Split reusable UI/system concerns from domain/application concerns
+- Split reusable UI/system concerns from domain/application concerns when the project is large enough for that boundary to pay for itself
 - Prefer small, focused modules over large mixed-responsibility files
+- Scale architecture with project size instead of front-loading library-grade structure into small apps
 
 Reference evidence:
 
@@ -105,10 +108,11 @@ Guide agents on how to move data through a Vue application without leaking backe
 Primary guidance:
 
 - Use services for transport and request orchestration
-- Use maps/adapters to translate between backend request/response shapes and domain-facing shapes
-- Keep models/types stable and meaningful to the UI layer
+- Use maps/adapters to translate between backend request/response shapes and domain-facing shapes when backend contracts are complex or unstable
+- Keep models/types stable and meaningful to the UI layer where a distinct domain model exists
 - Let components consume domain-oriented data instead of raw API payloads whenever the domain is nontrivial
 - Be explicit about ownership of data transformation logic
+- Avoid inventing service and mapping layers in trivial projects that can stay simple without them
 
 Reference evidence:
 
@@ -176,6 +180,7 @@ Each skill should avoid:
 - Encoding Prefect-specific naming as a universal standard
 - Treating barrel exports or plugin registration as mandatory everywhere
 - Assuming every Vue project needs the same level of layering on day one
+- Assuming every project should be split like `prefect-design` or `prefect-ui-library`
 - Over-prescribing patterns that only make sense for published component libraries
 
 ## Initial Implementation Shape
