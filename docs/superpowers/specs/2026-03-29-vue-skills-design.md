@@ -2,190 +2,185 @@
 
 ## Goal
 
-Create a small set of narrowly scoped `SKILL.md`-based instructions for AI coding agents that help them build high-quality greenfield Vue 3 + TypeScript projects.
+Create a small set of narrowly scoped `SKILL.md`-based instructions for AI coding agents that help them build high-quality Vue 3 + TypeScript projects.
 
-The skills should be grounded in patterns observed in the two reference repositories in this workspace:
+The skills should focus on transferable engineering standards:
 
-- `prefect-design`: a low-level reusable Vue component system
-- `prefect-ui-library`: a higher-level Vue library with domain models, services, maps, schemas, and application-facing components
+- strong component design
+- clear naming and organisation
+- maintainable architecture
+- disciplined code quality
+- reliable testing and verification
+- high-signal code review
 
-The resulting skills should be generic and reusable across future Vue projects, with Prefect patterns cited as evidence and examples rather than copied as strict defaults. They should teach agents how to choose an appropriate level of structure for the project at hand, not how to clone the organization of these two repositories.
+The final skills should stand on their own. They should not assume any particular repository shape, company conventions, or library-sized project structure.
 
-## Source Analysis Summary
+## Extracted Design Principles
 
-### `prefect-design`
+The skills should encode principles, not templates.
 
-Key strengths:
+What matters:
 
-- Strong component-oriented organization under `src/components`
-- Consistent local `index.ts` exports per component folder
-- Clear separation between components, compositions, layouts, models, plugins, types, and utilities
-- Typed props and emits in representative components such as `src/components/Wizard/PWizard.vue`
-- A library-style entry point in `src/index.ts` that defines a public API and installable Vue plugin
+- components with clear responsibilities and stable contracts
+- code that is typed, readable, and easy to change safely
+- naming that makes intent and ownership obvious
+- organisation that helps people find the right code quickly
+- architecture that matches the project's real complexity
+- verification that checks behavior, not just compilation
+- review standards that catch structural and maintainability problems early
 
-Observed risks and caveats:
+What should be avoided:
 
-- Very large barrel exports such as `src/components/index.ts` can become hard to review and easy to bloat
-- The component surface is large relative to visible automated test coverage
-- Some patterns are design-system specific and should not be treated as universal Vue defaults
-
-### `prefect-ui-library`
-
-Key strengths:
-
-- Clear higher-level separation between components, compositions, services, maps, models, schemas, router, localization, and utilities
-- Useful transport and integration boundaries in `src/services`, especially the base `Api` class
-- Strong evidence of translating domain and API concerns outside presentational components through `services`, `maps`, and `models`
-- Library entry point in `src/index.ts` that exposes a public surface and handles plugin setup
-
-Observed risks and caveats:
-
-- Some files, such as `src/maps/filters.ts`, are large enough to create review and maintenance pressure
-- There are tests present, but the amount of test coverage appears modest relative to the amount of transformation and orchestration logic
-- Some implementation areas rely on ESLint exceptions, which is sometimes justified but should not become a default habit in future projects
-
-### Cross-Repo Conclusions
-
-The two repositories together show what disciplined Vue code can look like when a codebase grows large enough to need explicit boundaries. They are useful reference points for:
-
-- separating responsibilities clearly
-- defining public module surfaces intentionally
-- keeping domain and transport logic out of presentational components
-- scaling structure as complexity increases
-
-They should not be treated as proof that every Vue project needs the same folders, the same number of layers, or the same library-oriented split. A future skill set should preserve the underlying principles while teaching agents to apply only as much structure as the current project actually needs.
+- copying a large-project folder structure into a small project
+- inventing layers that do not pay for their complexity
+- mixing presentation, state coordination, transport, and data transformation without clear boundaries
+- broad public surfaces that make ownership unclear
+- weak naming that forces readers to inspect implementation details to understand purpose
+- treating `lint`, `build`, or `typecheck` as sufficient evidence that behavior is correct
 
 ## Proposed Skill Set
 
 ### 1. `vue-project-architecture`
 
 Purpose:
-Help agents structure a Vue 3 + TypeScript project with clear module boundaries, explicit public surfaces, and a sane default layering model.
+Help agents choose an appropriate project structure, define module boundaries, and scale architecture with complexity instead of guessing at a heavyweight layout up front.
 
 Primary guidance:
 
-- Organize code by responsibility, not by file type alone
-- Introduce components, compositions, services, maps/adapters, models/types, and utilities only when the project complexity justifies them
-- Use top-level `index.ts` files intentionally to define public APIs, not as dumping grounds
-- Split reusable UI/system concerns from domain/application concerns when the project is large enough for that boundary to pay for itself
-- Prefer small, focused modules over large mixed-responsibility files
-- Scale architecture with project size instead of front-loading library-grade structure into small apps
+- Organize code by responsibility and change surface
+- Start with the simplest structure that keeps ownership clear
+- Add layers only when they reduce confusion or coupling
+- Keep module boundaries explicit
+- Define public surfaces intentionally
+- Split files and modules when responsibilities start to blur
+- Prefer architecture that is easy to navigate over architecture that looks impressive
 
-Reference evidence:
+This skill should cover:
 
-- `prefect-design/src/index.ts`
-- `prefect-design/src/components`
-- `prefect-ui-library/src/index.ts`
-- `prefect-ui-library/src/services`
-- `prefect-ui-library/src/maps`
-- `prefect-ui-library/src/models`
+- folder structure
+- module boundaries
+- public API surfaces
+- when to split logic into separate modules
+- when not to split logic yet
+- how architecture should evolve as a project grows
 
 ### 2. `vue-component-design`
 
 Purpose:
-Teach agents how to build reusable, typed, maintainable Vue components with clear interfaces and minimal domain leakage.
+Teach agents how to build Vue components with clear interfaces, predictable behavior, and maintainable internal structure.
 
 Primary guidance:
 
-- Keep presentation components focused on rendering and emitting intent
-- Use typed props and emits
-- Prefer controlled interfaces where inputs and update events are explicit
-- Extract reactive behavior into compositions when component scripts start coordinating too much logic
-- Preserve accessibility and styling discipline
-- Avoid combining API transport, domain mapping, and presentation in one SFC
+- Keep each component focused on one clear purpose
+- Design props and emits as stable contracts
+- Prefer explicit data flow over hidden coupling
+- Keep presentational concerns separate from unrelated business logic
+- Extract reusable logic when the component script becomes orchestration-heavy
+- Preserve accessibility, semantics, and styling discipline
+- Make component names reflect purpose rather than implementation detail
 
-Reference evidence:
+This skill should cover:
 
-- `prefect-design/src/components/Wizard/PWizard.vue`
-- `prefect-design/src/components/*`
-- `prefect-design/src/compositions`
+- prop and emit design
+- controlled and uncontrolled patterns
+- slot design
+- accessibility expectations
+- internal component structure
+- when to extract composables
+- how to keep components reusable without over-abstracting
 
-### 3. `vue-domain-data-flow`
+### 3. `vue-code-quality`
 
 Purpose:
-Guide agents on how to move data through a Vue application without leaking backend payload shapes directly into the component tree.
+Help agents write Vue and TypeScript code that is readable, typed, maintainable, and easy to review.
 
 Primary guidance:
 
-- Use services for transport and request orchestration
-- Use maps/adapters to translate between backend request/response shapes and domain-facing shapes when backend contracts are complex or unstable
-- Keep models/types stable and meaningful to the UI layer where a distinct domain model exists
-- Let components consume domain-oriented data instead of raw API payloads whenever the domain is nontrivial
-- Be explicit about ownership of data transformation logic
-- Avoid inventing service and mapping layers in trivial projects that can stay simple without them
+- Prefer explicit, intention-revealing names
+- Keep functions and modules focused
+- Use TypeScript to clarify contracts rather than to impress the type checker
+- Avoid cleverness that hides data flow or control flow
+- Isolate complicated transformations so they can be understood and tested
+- Keep comments rare and useful
+- Optimize for safe change over minimal line count
 
-Reference evidence:
+This skill should cover:
 
-- `prefect-ui-library/src/services/Api.ts`
-- `prefect-ui-library/src/services`
-- `prefect-ui-library/src/maps/filters.ts`
-- `prefect-ui-library/src/models`
-- `prefect-ui-library/src/schemas`
+- naming conventions
+- file and function shape
+- TypeScript discipline
+- separation of concerns in implementation
+- maintainability heuristics
+- common anti-patterns in Vue and TS code
 
 ### 4. `vue-testing-and-verification`
 
 Purpose:
-Make agents verify behavior, not just compile success, and apply testing effort where Vue projects often underinvest.
+Make agents verify behavior with enough evidence for the complexity of the change.
 
 Primary guidance:
 
-- Test transformation logic, mapping code, and reactive orchestration
-- Treat `lint`, `build`, and `typecheck` as baseline verification, not complete validation
-- Add focused tests for utility logic, composables, and nontrivial domain transforms
-- Prefer verification evidence before claiming a change is complete
-- Escalate missing tests as a real quality risk during review
+- Test logic where regressions are likely and expensive
+- Treat verification as part of implementation, not a final formality
+- Use `lint`, `build`, and `typecheck` as baselines, not as complete validation
+- Add focused tests for transformations, composables, state coordination, and nontrivial component behavior
+- Match the verification depth to the risk and complexity of the change
+- State verification limits clearly when something cannot be tested
 
-Reference evidence:
+This skill should cover:
 
-- `prefect-ui-library/package.json`
-- `prefect-design/package.json`
-- `prefect-ui-library/.github/workflows/tests.yaml`
-- `prefect-design/.github/workflows/tests.yaml`
-- `prefect-ui-library/src/compositions/usePagination.ts`
-- `prefect-ui-library/src/maps/filters.ts`
+- what deserves unit tests
+- what deserves component tests
+- what deserves integration-style checks
+- required verification before claiming completion
+- how to report residual risk honestly
 
 ### 5. `vue-code-review`
 
 Purpose:
-Provide a high-signal review checklist for Vue changes, focused on architectural integrity, API quality, and testing sufficiency.
+Provide a high-signal review standard for Vue code that focuses on correctness, maintainability, architecture, and test sufficiency.
 
 Primary guidance:
 
-- Look for boundary violations between components, compositions, services, maps, and models
-- Check whether component contracts are narrow, typed, and comprehensible
-- Flag large files and barrels that obscure ownership or bloat the public surface
-- Look for backend-shaped data leaking into presentation code
-- Treat missing tests for nontrivial logic as a review finding, not a suggestion
+- Review for structural problems, not just syntax and style
+- Check whether names, boundaries, and contracts are clear
+- Flag components that do too much
+- Flag architecture that is too weak or too elaborate for the problem
+- Look for hidden coupling and unclear ownership
+- Treat missing tests for nontrivial logic as a real finding
+- Prefer specific, actionable review feedback tied to behavior or maintainability risk
 
-Reference evidence:
+This skill should cover:
 
-- `prefect-design/src/components/index.ts`
-- `prefect-ui-library/src/maps/filters.ts`
-- `prefect-ui-library/src/services/index.ts`
-- `prefect-ui-library/src/components`
+- review checklist design
+- severity-based findings
+- architecture drift
+- component contract quality
+- maintainability risks
+- testing gaps
 
 ## Skill Authoring Principles
 
 Each skill should:
 
-- Be narrowly scoped enough that an agent can select it confidently from task wording
-- Give explicit rules, not vague advice
-- Include concrete signals for when the skill applies
-- Include anti-patterns to avoid
-- Prefer generic Vue 3 + TypeScript guidance while citing Prefect examples as supporting evidence
-- Stay useful in greenfield projects, not just library repositories
+- be narrow enough that an agent can select it confidently
+- give explicit rules and decision criteria
+- explain when the skill applies
+- explain when a simpler approach is correct
+- include anti-patterns and review heuristics
+- optimize for reusable Vue engineering judgment rather than one team's conventions
 
 Each skill should avoid:
 
-- Encoding Prefect-specific naming as a universal standard
-- Treating barrel exports or plugin registration as mandatory everywhere
-- Assuming every Vue project needs the same level of layering on day one
-- Assuming every project should be split like `prefect-design` or `prefect-ui-library`
-- Over-prescribing patterns that only make sense for published component libraries
+- hard-coding one project structure as the standard
+- assuming a library-sized codebase
+- encouraging premature abstraction
+- teaching patterns without telling agents when not to use them
+- overfitting to any specific reference repository
 
 ## Initial Implementation Shape
 
-Create one folder per skill under a root-level skills directory dedicated to this project. Each skill should include at minimum:
+Create one folder per skill under a root-level skills directory. Each skill should include at minimum:
 
 - `SKILL.md`
 
@@ -193,16 +188,16 @@ Suggested initial set:
 
 - `skills/vue-project-architecture/SKILL.md`
 - `skills/vue-component-design/SKILL.md`
-- `skills/vue-domain-data-flow/SKILL.md`
+- `skills/vue-code-quality/SKILL.md`
 - `skills/vue-testing-and-verification/SKILL.md`
 - `skills/vue-code-review/SKILL.md`
 
 ## Open Decisions Already Resolved
 
 - Use a small set of narrowly scoped skills instead of one broad Vue skill
-- Optimize for generic greenfield Vue 3 + TypeScript work
+- Optimize for generic Vue 3 + TypeScript work
 - Implement actual `SKILL.md` files, not only prose guidance
-- Use the workspace root as the owning repository for the new instructions
+- Keep the skills independent from the original reference repositories
 
 ## Next Step
 
@@ -211,4 +206,4 @@ After this design is reviewed and approved, write an implementation plan for the
 - creating the root-level skill folder structure
 - drafting each `SKILL.md`
 - ensuring each skill has a clear trigger, scope, checklist, and anti-pattern section
-- validating that the skills do not contradict each other unnecessarily
+- checking that the skills complement each other without unnecessary overlap
