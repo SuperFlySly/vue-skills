@@ -11,9 +11,9 @@ Write code that reveals intent quickly, keeps contracts clear, and stays safe to
 
 ## Use This When
 
-- writing Vue or TypeScript code that needs clearer names, file shape, contracts, or implementation flow
+- writing Vue or TypeScript code that needs clearer names, file shape, local contracts, or implementation flow
 - refactoring confusing code for readability and maintainability
-- keeping implementation decisions focused on clarity, contracts, and local maintainability
+- keeping implementation decisions focused on clarity and local maintainability
 
 ## Scope
 
@@ -23,7 +23,7 @@ Write code that reveals intent quickly, keeps contracts clear, and stays safe to
 - TypeScript contract clarity
 - separation of concerns in implementation
 - maintainability heuristics for local code structure
-- local implementation clarity, naming, file and function shape, TypeScript contract clarity, separation of concerns, and maintainability heuristics
+- local implementation clarity rather than project architecture, component API design, or verification strategy
 
 ## Core Rules
 
@@ -56,5 +56,5 @@ Write code that reveals intent quickly, keeps contracts clear, and stays safe to
 - Vue watchers, computed values, or lifecycle hooks that mix unrelated concerns
 - vague names like `data`, `handler`, or `process` without context
 - giant files with mixed responsibilities
-- props, emits, or composables whose names hide their real contract
+- composables or local APIs whose names hide what they actually do
 - TypeScript types so abstracted or recursive that the runtime behavior becomes hard to follow

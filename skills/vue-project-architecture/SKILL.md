@@ -27,7 +27,7 @@ Choose the simplest structure that keeps ownership, boundaries, and change surfa
 - Organize by responsibility, not by technical fashion
 - Add layers only when they reduce coupling or confusion
 - Keep public entry points intentional
-- Split files when they mix responsibilities
+- Split modules when boundaries blur responsibilities
 - Do not copy large-project architecture into a small project without evidence
 
 ## Workflow
