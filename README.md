@@ -2,6 +2,8 @@
 
 Reusable Codex skills for Vue 3 and TypeScript projects.
 
+Codex discovers repo-local skills from `.agents/skills`. This repository is laid out so launching Codex here or copying `.agents/skills` into a Vue project makes the skills available without a separate packaging step.
+
 ## Included Skills
 
 - `vue-project-architecture`
@@ -10,60 +12,66 @@ Reusable Codex skills for Vue 3 and TypeScript projects.
 - `vue-testing-and-verification`
 - `vue-code-review`
 
-## Install Locally
+## Use In A Vue Project
 
-Codex discovers user-installed skills from `$CODEX_HOME/skills`. If `CODEX_HOME` is not set, the default is `~/.codex/skills`.
-
-From this repository root:
+For a project-local install, copy the skills directory into your Vue project:
 
 ```bash
-CODEX_SKILLS_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
-mkdir -p "$CODEX_SKILLS_DIR"
-
-cp -R skills/vue-project-architecture "$CODEX_SKILLS_DIR/"
-cp -R skills/vue-component-design "$CODEX_SKILLS_DIR/"
-cp -R skills/vue-code-quality "$CODEX_SKILLS_DIR/"
-cp -R skills/vue-testing-and-verification "$CODEX_SKILLS_DIR/"
-cp -R skills/vue-code-review "$CODEX_SKILLS_DIR/"
+mkdir -p /path/to/vue-project/.agents
+cp -R .agents/skills /path/to/vue-project/.agents/
 ```
 
-Restart Codex after installing so it can discover the new skills.
+Restart Codex after adding or changing skills so it can discover them.
 
-## Install For Local Development
-
-If you want Codex to use edits from this repo immediately, symlink the skill folders instead of copying them:
+If the Vue project already has an `.agents/skills` directory, copy only the skill folders:
 
 ```bash
-CODEX_SKILLS_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
-mkdir -p "$CODEX_SKILLS_DIR"
+mkdir -p /path/to/vue-project/.agents/skills
+cp -R .agents/skills/vue-* /path/to/vue-project/.agents/skills/
+```
 
-ln -sfn "$PWD/skills/vue-project-architecture" "$CODEX_SKILLS_DIR/vue-project-architecture"
-ln -sfn "$PWD/skills/vue-component-design" "$CODEX_SKILLS_DIR/vue-component-design"
-ln -sfn "$PWD/skills/vue-code-quality" "$CODEX_SKILLS_DIR/vue-code-quality"
-ln -sfn "$PWD/skills/vue-testing-and-verification" "$CODEX_SKILLS_DIR/vue-testing-and-verification"
-ln -sfn "$PWD/skills/vue-code-review" "$CODEX_SKILLS_DIR/vue-code-review"
+## Use By Default
+
+For a user-wide install on this machine, symlink the skill folders into Codex's user skill directory:
+
+```bash
+mkdir -p "$HOME/.agents/skills"
+ln -sfn "$PWD/.agents/skills/vue-project-architecture" "$HOME/.agents/skills/vue-project-architecture"
+ln -sfn "$PWD/.agents/skills/vue-component-design" "$HOME/.agents/skills/vue-component-design"
+ln -sfn "$PWD/.agents/skills/vue-code-quality" "$HOME/.agents/skills/vue-code-quality"
+ln -sfn "$PWD/.agents/skills/vue-testing-and-verification" "$HOME/.agents/skills/vue-testing-and-verification"
+ln -sfn "$PWD/.agents/skills/vue-code-review" "$HOME/.agents/skills/vue-code-review"
 ```
 
 Restart Codex after creating or changing symlinks.
 
-## Install From GitHub
+If you prefer copied files instead of symlinks:
 
-After this repository is pushed to GitHub, ask Codex to install the skill folders from the repo, for example:
-
-```text
-Install these Codex skills from <owner>/<repo>:
-- skills/vue-project-architecture
-- skills/vue-component-design
-- skills/vue-code-quality
-- skills/vue-testing-and-verification
-- skills/vue-code-review
+```bash
+mkdir -p "$HOME/.agents/skills"
+cp -R .agents/skills/vue-* "$HOME/.agents/skills/"
 ```
 
-Codex installs GitHub-hosted skills into `$CODEX_HOME/skills` and will tell you to restart after installation.
+Restart Codex after copying the skills.
 
-## Use In Vue Projects By Default
+## Install From GitHub With Codex
 
-To make Codex apply these skills by default in a Vue repo, add an `AGENTS.md` file to that repo:
+Codex also supports installing GitHub-hosted skill folders through the `skill-installer` skill. In Codex, ask:
+
+```text
+Use skill-installer to install these Codex skills:
+- https://github.com/SuperFlySly/vue-skills/tree/main/.agents/skills/vue-project-architecture
+- https://github.com/SuperFlySly/vue-skills/tree/main/.agents/skills/vue-component-design
+- https://github.com/SuperFlySly/vue-skills/tree/main/.agents/skills/vue-code-quality
+- https://github.com/SuperFlySly/vue-skills/tree/main/.agents/skills/vue-testing-and-verification
+- https://github.com/SuperFlySly/vue-skills/tree/main/.agents/skills/vue-code-review
+```
+
+Restart Codex after installing.
+
+## Recommended Project Prompt
+
+To make intent explicit in each Vue repo, add an `AGENTS.md` file:
 
 ```md
 # AGENTS.md
@@ -80,3 +88,12 @@ Use these skills by default:
 
 If multiple skills apply, use the smallest relevant set.
 ```
+
+## Future Packaging
+
+For a cleaner one-command installation experience, package these skills as a Codex plugin. The plugin can expose the same `.agents/skills` content through a reusable repository-level package instead of asking users to install each skill folder separately.
+
+## References
+
+- [Using skills in Codex](https://developers.openai.com/codex/skills/)
+- [OpenAI skills catalog](https://github.com/openai/skills)
